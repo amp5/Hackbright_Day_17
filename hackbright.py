@@ -8,7 +8,6 @@ import sqlite3
 
 db_connection = sqlite3.connect("hackbright.db", check_same_thread=False)
 db_cursor = db_connection.cursor()
-# this creates our cursor
 
 
 def get_student_by_github(github):
@@ -41,11 +40,11 @@ def handle_input():
 
         if command == "student":
             github = args[0]
-            get_student_by_github(github) #we dont have this function yet, we will be creating this later
+            get_student_by_github(github) 
 
         elif command == "new_student":
             first_name, last_name, github = args   # unpack!
-            make_new_student(first_name, last_name, github) #we dont have this function yet, we will be creating this later
+            make_new_student(first_name, last_name, github) 
 
         elif command == "project_title":
             title = args[0]
