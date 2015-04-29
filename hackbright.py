@@ -8,6 +8,7 @@ import sqlite3
 
 db_connection = sqlite3.connect("hackbright.db", check_same_thread=False)
 db_cursor = db_connection.cursor()
+# this creates our cursor
 
 
 def get_student_by_github(github):
@@ -40,12 +41,78 @@ def handle_input():
 
         if command == "student":
             github = args[0]
-            get_student_by_github(github)
+            get_student_by_github(github) #we dont have this function yet, we will be creating this later
 
         elif command == "new_student":
             first_name, last_name, github = args   # unpack!
-            make_new_student(first_name, last_name, github)
+            make_new_student(first_name, last_name, github) #we dont have this function yet, we will be creating this later
 
+        elif command == "project_title":
+            title = args[0]
+            project_title(title)
+
+        elif command == "student_grade":
+            student_github, project_title = args
+            student_grade(student_github, project_title)
+
+        elif command == "assign_grade":
+            grade, student_github, project_title = args
+            assign_grade(grade, student_github, project_title)
+
+def assign_grade(grade, student_github, project_title):
+
+    QUERY = """
+            INSERT INTO Grades (grade, student_github, project_title) VALUES (?, ?, ?)
+            """
+
+    db_cursor.execute(QUERY, (grade, student_github, project_title))
+    db_connection.commit()
+
+    print "You have added the grade of %s ." % (grade)
+
+
+def student_grade(student_github,project_title):
+    QUERY = """
+            SELECT grade FROM Grades WHERE student_github = ? AND project_title = ?
+            """
+    db_cursor.execute(QUERY, (student_github, project_title))
+    results = db_cursor.fetchone()
+    print results
+    print "This is %s's grade." %(student_github)
+
+
+def project_title(title):
+
+    QUERY = """
+            SELECT * FROM Projects WHERE title = ?
+            """
+
+    db_cursor.execute(QUERY, (title,))
+
+    results = db_cursor.fetchall()
+
+    print results
+
+    print "These are the project details for %s" % (title)    
+
+
+#def get_student_by_github():
+
+def make_new_student(first_name, last_name, github):
+    """Add a new student and print confirmation.
+
+    Given a first name, last name, and GitHub account, add student to the
+    database and print a confirmation message.
+    """
+
+    QUERY = """
+            INSERT INTO Students     
+            VALUES (?, ?, ?)
+            """
+    db_cursor.execute(QUERY, (first_name, last_name, github))
+
+    db_connection.commit()
+    print "Successfully added student: %s %s" % (first_name, last_name)
 
 if __name__ == "__main__":
     handle_input()
